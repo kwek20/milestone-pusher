@@ -2,6 +2,7 @@ package org.iota.utility.tasks;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.iota.jota.dto.response.IotaCustomResponse;
@@ -35,10 +36,14 @@ public class QueueRequester extends Task {
             }
 
             AtomicInteger totalCount = new AtomicInteger(0);
+            AtomicBoolean encounteredError = new AtomicBoolean(false);
             try {
                 Parallel.of(transactionHashes, new Parallel.Operation<String>() {
                     public void perform(String tx) {
                         try {
+                            if (encounteredError.get()) {
+                                return;
+                            }
                             boolean targetHas = source.checkTargetForTransaction(tx);
                             if (!targetHas) {
                                 int newCount = totalCount.incrementAndGet();
@@ -57,14 +62,15 @@ public class QueueRequester extends Task {
                         } catch (Exception e) {
                             System.out.println("Encountered error during handling of " + tx);
                             e.printStackTrace();
+                            encounteredError.set(true);
                         }
                     }
                 });
 
                 System.out.println("Storing done; Added " + totalCount.get() + " missing transactions");
-                System.out.println("Sleeping for 10 seconds... Bye!");
+                System.out.println("Sleeping for 1 second... Bye!");
                 totalCount.set(0);
-                Thread.sleep(1000 * 10);
+                Thread.sleep(1000 * 1);
             } catch (InterruptedException e) {
                 stopped = true;
             }

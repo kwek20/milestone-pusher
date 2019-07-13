@@ -76,7 +76,11 @@ public class Main {
 
                 String taskInput = myObj.nextLine().toUpperCase(); // Read user input
 
-                task = TaskName.valueOf(taskInput);
+                try {
+                    task = TaskName.valueOf(taskInput);
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
             } while (task == null);
         }
 
