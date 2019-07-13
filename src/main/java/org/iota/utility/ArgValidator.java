@@ -10,6 +10,7 @@ public class ArgValidator {
             new URL(arg);
             return true;
         } catch (MalformedURLException e) {
+            System.out.println(e.getMessage());
             return false;
         }
     }
