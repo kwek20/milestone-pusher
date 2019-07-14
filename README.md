@@ -1,5 +1,5 @@
 # node-syncer
-Pushes missing TX from one node to another
+(Inefficiently) Pushes missing TX from one node to another
 
 Has 2 options: sync milestone TX, or sync transactions in the transactionrequester(queue) list
 
